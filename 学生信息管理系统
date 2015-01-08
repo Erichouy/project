@@ -1,0 +1,302 @@
+#include"stdio.h"
+#include"stdlib.h"
+#include"string.h"
+#define N 3
+typedef struct z1
+{
+char no[11];
+char name[15];
+int score[N];
+float sum;
+float average;
+int order;
+struct z1 *next;
+}STUDENT;
+STUDENT *init();
+STUDENT *create();
+STUDENT *del(STUDENT *h);
+void print(STUDENT *h);
+void search1(STUDENT *h);
+STUDENT *insert(STUDENT *h);
+
+void save(STUDENT *h);
+
+int menu_select();
+STUDENT *load();
+void inputs(char *prompt,char *s,int count);
+STUDENT *load();
+main()
+{
+int i;
+STUDENT *head;
+head=init();
+for(;;)
+{
+switch(menu_select())
+{
+case 0:head=init();break;
+case 1:head=create();break;
+case 2:head=insert(head);break;
+case 3:print(head);break;
+case 4:search1(head);break;
+case 5:save(head);break;
+case 6:del(head);break;
+case 7:exit(0);
+}
+}
+}
+int menu_select()
+{
+char *menu[]={"************menu************",
+"0. chu shi hua lian biao",
+"1. shu ru xue sheng cheng ji",
+"2. cha ru xue sheng cheng ji",
+"3. xian shi xue sheng ji lu",
+"4. an xue hao cha zhao cheng ji",
+"5. bao cun xin xi",
+"6. shan chu xin xi",
+"7. exit"};
+char s[3];
+int c,i;
+for(i=0;i<=11;i++)
+printf(" %s\n",menu[i]);
+do
+{
+printf("\n choose 0-7\n");
+scanf("%s",s);
+c=atoi(s);
+}while(c<0||c>7);
+return c;
+}
+STUDENT *init()
+{
+return NULL;
+}
+STUDENT *create()
+{
+int i;int s;
+STUDENT *h=NULL,*info;
+for(;;)
+{
+info=(STUDENT *)malloc(sizeof(STUDENT));
+if(!info)
+{
+printf("\n nei cun bu zu");
+return NULL;
+}
+inputs("shu ru xue hao:",info->no,11);
+if(info->no[0]=='@')break;
+inputs("shu ru ming zi:",info->name,15);
+printf("kai shi shu ru %d men ke de cheng ji\n",N);
+s=0;
+for(i=0;i<N;i++)
+{
+do{
+printf("di %d men fen shu :",i+1);
+scanf("%d",&info->score[i]);
+if(info->score[i]>100||info->score[i]<0)
+printf("shu ru cheng ji cuo wu ,chong xin shu ru :\n");
+}while(info->score[i]>100||info->score[i]<0);
+s=s+info->score[i];
+}
+info->sum=s;
+info->average=(float)s/N;
+info->order=0;
+info->next=h;
+h=info;
+}
+return h;
+}
+void inputs(char *prompt,char *s,int count)
+{
+char p[255];
+do
+{
+printf(prompt);
+scanf("%s",p);
+if(strlen(p)>count)
+printf("\n too long !\n");
+}while(strlen(p)>count);
+strcpy(s,p);
+}
+void print(STUDENT *h)
+{
+int i=0;
+STUDENT *p;
+p=h;
+printf("\n\n\n***********************xue sheng***********************\n");
+printf("|xue hao  | ming zi| yu wen |ying yu  |shu xue | zong fen  |\n");
+while(p!=NULL)
+{
+i++;
+printf("|%3d |%-10s|%-8s|%4d|%4d|%4d|%4.2f|%4.2f|%3d|\n",i,p->no,p->name,p->score[0],p->score[1],p->score[2],p->sum,p->average,p->order);
+p=p->next;
+}
+printf("***********************end***********************\n");
+}
+STUDENT *del(STUDENT *h)
+{
+STUDENT *p,*q;
+char s[11];
+printf("shu ru shan chu de xue hao \n");
+scanf("%s",s);
+q=p=h;
+while(strcmp(p->no,s)&&p!=NULL)
+{
+q=p;
+p=p->next;
+}
+if(p==NULL)
+printf("\n mei you xue hao wei %s de xue sheng \n",s);
+else
+{
+printf("\n\n\n***********************zhao dao le***********************\n");
+printf("|xue hao | ming zi |yu wen |ying yu |shu xue | \n");
+printf("|----------|----------|----|----|----|------|------|---|\n");
+printf("|%-10s|%-8s|%4d|%4d|%4d|%4.2f|%4.2f|%3d|\n",p->no,p->name,p->score[0],p->score[1],p->score[2],p->sum,p->average,p->order);
+printf("***********************end***********************\n");
+printf("stess any key to delete \n");
+getchar();
+if(p==h)
+h=p->next;
+else q->next=p->next;
+free(p);
+printf("\n yi jing shan chu xue hao wei %s de xue sheng \n",s);
+printf("bu yao wang le bao cun shu ju \n");
+}
+return h;
+}
+void search1(STUDENT *h)
+{
+STUDENT *p;
+char s[11];
+printf("shu ru cha zhao de xue hao \n");
+scanf("%s",s);
+p=h;
+while(strcmp(p->no,s)&&p!=NULL)
+p=p->next;
+if(p==NULL)
+printf("'n mei you xue hao wei %s de xue sheng \n",s);
+else
+{
+printf("\n\n\n***********************zhao dao le***********************\n");
+printf("|xue hao| ming zi | yu wen| ying yu| shu xue | \n");
+printf("|----------|-----------|----|----|----|------|------|---|\n");
+printf("|%-10s|%-8s|%4d|%4d|%4d|%4.2f|%4.2f|%3d|\n",p->no,p->name,p->score[0],p->score[1],p->score[2],p->sum,p->average,p->order);
+printf("***********************end***********************\n");
+}
+}
+STUDENT *insert(STUDENT *h)
+{
+STUDENT *p,*q,*info;
+char s[11];
+int s1,i;
+printf("shu ru cha ru dian de xue hao \n");
+scanf("%s",s);
+printf("\n shu ru xin de xue sheng xin xi \n");
+info=(STUDENT *)malloc(sizeof(STUDENT));
+if(!info)
+{
+printf("\n nei cu bu zu !");
+return NULL;
+}
+inputs("shu ru xue hao :",info->no,11);
+inputs("shu ru ming zi:",info->name,15);
+printf("shu ru%d men ke de fen shu \n",N);
+s1=0;
+for(i=0;i<N;i++)
+{
+do{
+printf("fen shu %d",i+1);
+scanf("%d",&info->score[i]);
+if(info->score[i]>100||info->score[i]<0)
+printf("shu ju cuo wu ,chong xin shu ru \n");
+}while(info->score[i]>100||info->score[i]<0);
+s1=s1+info->score[i];
+}
+info->sum=s1;
+info->average=(float)s1/N;
+info->order=0;
+info->next=NULL;
+p=h;
+q=h;
+while(strcmp(p->no,s)&&p!=NULL)
+{q=p;p=p->next;}
+if(p==NULL)
+if(p==h)
+h=info;
+else q->next=info;
+else
+if(p==h)
+{
+info->next=p;
+h=info;
+}
+else
+{
+info->next=p;
+q->next=info;
+}
+printf("\n yi jing cha ru le%s zhe ge xue sheng \n",info->name);
+printf("----bu yao wang le cun pan--\n");
+}
+void save(STUDENT *head)
+{FILE *fp;            /*定义指向文件的指针*/
+STUDENT *p;          /* 定义移动指针*/
+char outfile[10];
+printf("Enter outfile name,for example c:\\score\n");
+scanf("%s",outfile);
+if((fp=fopen(outfile,"wb"))==NULL)       /*为输出打开一个二进制文件,为只写方式*/
+       {
+        printf("Cannot open the file\n");
+        return;        /*若打不开则返回菜单*/
+       }
+printf("\nSaving the file......\n");
+p=head;                        /*移动指针从头指针开始*/
+while(p!=NULL)            /*如p不为空*/
+       {
+        fwrite(p,sizeof(STUDENT),1,fp);         /*写入一条记录*/
+        p=p->next;            /*指针后移*/
+       }
+fclose(fp);          /*关闭文件*/
+printf("Save the file successfully!\n");
+}
+
+STUDENT *load()
+{
+STUDENT *p,*q,*h=NULL;
+FILE *fp;
+char infile[10];
+printf("shu ru du qu shu ju de wen jian ming,li ru c:\\f1\\te.txt:\n");
+scanf("%s",infile);
+if((fp=fopen(infile,"wb"))==NULL)
+{
+printf("bu neng da kai wen jian \n");
+exit(1);
+}
+printf("zheng zai du qu....\n");
+p=(STUDENT *)malloc(sizeof(STUDENT));
+if(!p)
+{
+printf("nei cun bu zu !\n");
+exit(1);
+}
+h=p;
+while(!feof(fp))
+{
+if(1!=fread(p,sizeof(STUDENT),1,fp))
+break;
+p->next=(STUDENT *)malloc(sizeof(STUDENT));
+if(!p->next)
+{
+printf("nei cun bu zu!\n");
+return h;
+}
+q=p;
+p=p->next;
+}
+q->next=NULL;
+fclose(fp);
+printf("---cheng gong de du qu shu ju le !!!---\n");
+return h;
+}
